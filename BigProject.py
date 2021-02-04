@@ -180,7 +180,7 @@ def obliczanie_odleglosci():
 
         odległość = math.sqrt(subt_danceability**2+subt_energy**2+subt_key**2+subt_acousticness**2+subt_instrumentalness**2+subt_liveness**2+subt_loudness**2
                               +subt_mode**2+subt_speechiness**2+subt_tempo**2+subt_valence**2)
-        odległości.append([round(odległość,2), features[i]["id"], titles[i], artists[i]])
+        odległości.append([round(odległość,2), features[i]["id"], titles[i], artists[i][0]["name"]])
     odległości.sort()
 
 def potwierdzenie():
