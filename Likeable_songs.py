@@ -1,6 +1,7 @@
 import pandas as pd
 import spotipy
 import math
+import numpy as np
 from tkinter import *
 from spotipy.oauth2 import SpotifyClientCredentials
 from matplotlib.backends.backend_tkagg import (
@@ -57,14 +58,14 @@ class StartPage(Frame):
         global songs
         global features
         global target
-        # nazwa = "Reassuring"
-        # ID = "52KwifcwbsyxMfXUhcpMO4"
-        nazwa = self.entry_nazwa_playlisty.get()
-        ID = self.entry_ID_playlisty.get()      # ID playlisty to ten fragment linku po ukośniku i pytajnikiem
-        if ID.startswith('https://open.spotify.com/playlist/'):
-            ID = ID[34:].split("?")[0]
-        else:
-            print("Wklej odpowiedni link")       # zamiast tego printa dobrze byłoby wstawić messagebox z informacją
+        nazwa = "Reassuring"
+        ID = "52KwifcwbsyxMfXUhcpMO4"
+        # nazwa = self.entry_nazwa_playlisty.get()
+        # ID = self.entry_ID_playlisty.get()      # ID playlisty to ten fragment linku po ukośniku i pytajnikiem
+        # if ID.startswith('https://open.spotify.com/playlist/'):
+        #     ID = ID[34:].split("?")[0]
+        # else:
+        #     print("Wklej odpowiedni link")       # zamiast tego printa dobrze byłoby wstawić messagebox z informacją
         playlist = sp.user_playlist(nazwa, ID)
         songs = playlist["tracks"]["items"]
         print("Liczba piosenek: ", len(songs))    # niestety w tym API jest ograniczenie do 100 piosenek
@@ -75,7 +76,7 @@ class StartPage(Frame):
         features = sp.audio_features(ids)
         self.entry_nazwa_playlisty.delete(0, 'end')
         self.entry_ID_playlisty.delete(0, 'end')
-        self.dalej.config(relief = RAISED, state = NORMAL)
+        self.dalej.config(relief=RAISED, state=NORMAL)
 
 class PageOne(Frame):
     def __init__(self, master):
@@ -102,34 +103,71 @@ class PageOne(Frame):
         self.pole_tekstowe = Entry (mid_frame1)
         self.pole_tekstowe.grid(row = 1, column = 1)
 
-        button_submit= Button(mid_frame1, text="Zatwierdź", command = self.potwierdzenie)
-        button_submit.grid(row=2, column = 1)
-        self.button1 = Button(left_frame2, text="danceability", width = 15,  font=("Arial", 12), command = self.button1_action)
-        self.button1.grid(row = 1, column = 0, padx = 40, pady=3)
-        self.button2 = Button(left_frame2, text="energy", width = 15, font=("Arial", 12), command = self.button2_action)
-        self.button2.grid(row = 2, column = 0, padx = 0, pady=3)
-        self.button3 = Button(left_frame2, text="key", width = 15, font=("Arial", 12), command = self.button3_action)
-        self.button3.grid(row = 3, column = 0, padx = 0, pady=3)
-        self.button4 = Button(left_frame2, text="acousticness", width = 15, font=("Arial", 12), command = self.button4_action)
-        self.button4.grid(row = 4, column = 0, padx = 0, pady=3)
-        self.button5 = Button(left_frame2, text="instrumentalness", width = 15, font=("Arial", 12), command = self.button5_action)
-        self.button5.grid(row = 5, column = 0, padx = 0, pady=3)
-        self.button6 = Button(left_frame2, text="liveness", width = 15,  font=("Arial", 12), command = self.button6_action)
-        self.button6.grid(row = 6, column = 0, padx = 0, pady=3)
-        self.button7 = Button(left_frame2, text="loudness", width = 15, font=("Arial", 12), command = self.button7_action)
-        self.button7.grid(row = 7, column = 0, padx = 0, pady=3)
-        self.button8 = Button(left_frame2, text="mode", width = 15, font=("Arial", 12), command = self.button8_action)
-        self.button8.grid(row = 8, column = 0, padx = 0, pady=3)
-        self.button9 = Button(left_frame2, text="speechiness", width = 15, font=("Arial", 12), command = self.button9_action)
-        self.button9.grid(row = 9, column = 0, padx = 0, pady=3)
-        self.button10 = Button(left_frame2, text="tempo", width = 15, font=("Arial", 12), command = self.button10_action)
-        self.button10.grid(row = 10, column = 0, padx = 0, pady=3)
-        self.button11 = Button(left_frame2, text="valence", width = 15,  font=("Arial", 12), command = self.button11_action)
-        self.button11.grid(row = 11, column = 0, padx = 0, pady=3)
-        self.reset_button = Button(left_frame2, text = "reset", width = 15, bg="indian red", font=("Arial", 12), command=self.reset)
-        self.reset_button.grid(row=12, column = 0, pady=3)
+        self.button_submit = Button(mid_frame1, text="Zatwierdź", command=self.potwierdzenie)
+        self.button_submit.grid(row=2, column=1)
+        self.button_submit.config(relief=SUNKEN, state=DISABLED)
+        self.button1 = Button(left_frame2, text="danceability", width=15,  font=("Arial", 12), command=self.button1_action)
+        self.button1.grid(row=1, column=0, padx=40, pady=3)
+        self.button2 = Button(left_frame2, text="energy", width=15, font=("Arial", 12), command=self.button2_action)
+        self.button2.grid(row=2, column=0, padx=0, pady=3)
+        self.button3 = Button(left_frame2, text="key", width=15, font=("Arial", 12), command=self.button3_action)
+        self.button3.grid(row=3, column=0, padx=0, pady=3)
+        self.button4 = Button(left_frame2, text="acousticness", width=15, font=("Arial", 12), command=self.button4_action)
+        self.button4.grid(row=4, column=0, padx=0, pady=3)
+        self.button5 = Button(left_frame2, text="instrumentalness", width=15, font=("Arial", 12), command=self.button5_action)
+        self.button5.grid(row=5, column=0, padx=0, pady=3)
+        self.button6 = Button(left_frame2, text="liveness", width=15, font=("Arial", 12), command=self.button6_action)
+        self.button6.grid(row=6, column=0, padx=0, pady=3)
+        self.button7 = Button(left_frame2, text="loudness", width=15, font=("Arial", 12), command=self.button7_action)
+        self.button7.grid(row=7, column=0, padx=0, pady=3)
+        self.button8 = Button(left_frame2, text="mode", width=15, font=("Arial", 12), command=self.button8_action)
+        self.button8.grid(row=8, column=0, padx=0, pady=3)
+        self.button9 = Button(left_frame2, text="speechiness", width=15, font=("Arial", 12), command=self.button9_action)
+        self.button9.grid(row=9, column=0, padx=0, pady=3)
+        self.button10 = Button(left_frame2, text="tempo", width=15, font=("Arial", 12), command=self.button10_action)
+        self.button10.grid(row=10, column=0, padx=0, pady=3)
+        self.button11 = Button(left_frame2, text="valence", width=15,  font=("Arial", 12), command=self.button11_action)
+        self.button11.grid(row=11, column=0, padx=0, pady=3)
+        self.reset_button = Button(left_frame2, text="reset", width=15, bg="indian red", font=("Arial", 12), command=self.reset)
+        self.reset_button.grid(row=12, column=0, pady=3)
         Button(self, text="Return to start page",
                   command=lambda: self.master.switch_frame(StartPage)).grid()
+
+    def wizualizuj_dane(self):
+        if self.licznik_cech == 1:
+            fig = Figure(figsize=(6, 4), dpi=100, facecolor="powderblue")
+            chart = fig.add_subplot(111)
+            chart.set_xlabel(self.wybrane_cechy[0])
+
+            self.canvas = FigureCanvasTkAgg(fig, master=self.mid_frame2)  # A tk.DrawingArea.
+            self.canvas.draw()
+            self.canvas.get_tk_widget().pack()
+        elif self.licznik_cech == 2:
+            self.canvas.get_tk_widget().pack_forget()
+            fig = Figure(figsize=(6, 4), dpi=100, facecolor="powderblue")
+            chart = fig.add_subplot(111)
+            chart.set_xlabel(self.wybrane_cechy[0])
+            chart.set_ylabel(self.wybrane_cechy[1])
+
+            self.canvas = FigureCanvasTkAgg(fig, master=self.mid_frame2)  # A tk.DrawingArea.
+            self.canvas.draw()
+            self.canvas.get_tk_widget().pack()
+        elif self.licznik_cech == 3:
+            self.canvas.get_tk_widget().pack_forget()
+            fig = Figure(figsize=(6, 4), dpi=100, facecolor="powderblue")
+            chart = fig.add_subplot(111, projection="3d")
+            chart.set_xlabel(self.wybrane_cechy[0])
+            chart.set_ylabel(self.wybrane_cechy[1])
+            chart.set_zlabel(self.wybrane_cechy[2])
+
+            self.canvas = FigureCanvasTkAgg(fig, master=self.mid_frame2)  # A tk.DrawingArea.
+            self.canvas.draw()
+            self.canvas.get_tk_widget().pack()
+
+    ######## ten pasek narzędzi jest trochę kłopotliwy - nie wszystko działa tak jak powinno #######
+            # self.toolbar = NavigationToolbar2Tk(self.canvas, self.mid_frame2)
+            # self.toolbar.update()
+            # self.canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
 
     def obliczanie_odleglosci(self):
         for i in range(len(songs)):
@@ -193,91 +231,114 @@ class PageOne(Frame):
         print("\nOto proponowane piosenki: \n")
         for utwor in self.proponowane:
             print("\n", utwor)
+        self.odległości.clear()     # trzeba wyczyścić odległości, żeby przy wpisaniu innej liczby sąsiadów się nie nadpisało
 
     def button1_action(self):
         if self.licznik_cech < 3:
             self.button1.config(relief=SUNKEN, state=DISABLED)
+            self.button_submit.config(relief=RAISED, state=NORMAL)
             self.wybrane_cechy.append('danceability')
             self.licznik_cech += 1
+            self.wizualizuj_dane()
         else:
             print("wybrałeś już 3 cechy ")
     def button2_action(self):
         if self.licznik_cech < 3:
             self.button2.config(relief=SUNKEN, state=DISABLED)
+            self.button_submit.config(relief=RAISED, state=NORMAL)
             self.wybrane_cechy.append('energy')
             self.licznik_cech += 1
+            self.wizualizuj_dane()
         else:
             print("wybrałeś już 3 cechy ")
 
     def button3_action(self):
         if self.licznik_cech < 3:
             self.button3.config(relief=SUNKEN, state=DISABLED)
+            self.button_submit.config(relief=RAISED, state=NORMAL)
             self.wybrane_cechy.append('key')
             self.licznik_cech += 1
+            self.wizualizuj_dane()
         else:
             print("wybrałeś już 3 cechy ")
 
     def button4_action(self):
         if self.licznik_cech < 3:
             self.button4.config(relief=SUNKEN, state=DISABLED)
+            self.button_submit.config(relief=RAISED, state=NORMAL)
             self.wybrane_cechy.append('acousticness')
             self.licznik_cech += 1
+            self.wizualizuj_dane()
         else:
             print("wybrałeś już 3 cechy ")
 
     def button5_action(self):
         if self.licznik_cech < 3:
             self.button5.config(relief=SUNKEN, state=DISABLED)
+            self.button_submit.config(relief=RAISED, state=NORMAL)
             self.wybrane_cechy.append('instrumentalness')
             self.licznik_cech += 1
+            self.wizualizuj_dane()
         else:
             print("wybrałeś już 3 cechy ")
 
     def button6_action(self):
         if self.licznik_cech < 3:
             self.button6.config(relief=SUNKEN, state=DISABLED)
+            self.button_submit.config(relief=RAISED, state=NORMAL)
             self.wybrane_cechy.append('liveness')
             self.licznik_cech += 1
+            self.wizualizuj_dane()
         else:
             print("wybrałeś już 3 cechy ")
 
     def button7_action(self):
         if self.licznik_cech < 3:
             self.button7.config(relief=SUNKEN, state=DISABLED)
+            self.button_submit.config(relief=RAISED, state=NORMAL)
             self.wybrane_cechy.append('loudness')
             self.licznik_cech += 1
+            self.wizualizuj_dane()
         else:
             print("wybrałeś już 3 cechy ")
 
     def button8_action(self):
         if self.licznik_cech < 3:
             self.button8.config(relief=SUNKEN, state=DISABLED)
+            self.button_submit.config(relief=RAISED, state=NORMAL)
             self.wybrane_cechy.append('mode')
             self.licznik_cech += 1
+            self.wizualizuj_dane()
         else:
             print("wybrałeś już 3 cechy ")
 
     def button9_action(self):
         if self.licznik_cech < 3:
             self.button9.config(relief=SUNKEN, state=DISABLED)
+            self.button_submit.config(relief=RAISED, state=NORMAL)
             self.wybrane_cechy.append('speechiness')
             self.licznik_cech += 1
+            self.wizualizuj_dane()
         else:
             print("wybrałeś już 3 cechy ")
 
     def button10_action(self):
         if self.licznik_cech < 3:
             self.button10.config(relief=SUNKEN, state=DISABLED)
+            self.button_submit.config(relief=RAISED, state=NORMAL)
             self.wybrane_cechy.append('tempo')
             self.licznik_cech += 1
+            self.wizualizuj_dane()
         else:
             print("wybrałeś już 3 cechy ")
 
     def button11_action(self):
         if self.licznik_cech < 3:
             self.button11.config(relief=SUNKEN, state=DISABLED)
+            self.button_submit.config(relief=RAISED, state=NORMAL)
             self.wybrane_cechy.append('valence')
             self.licznik_cech += 1
+            self.wizualizuj_dane()
         else:
             print("wybrałeś już 3 cechy ")
 
@@ -295,10 +356,11 @@ class PageOne(Frame):
         self.button11.config(relief=RAISED, state=NORMAL)
         self.wybrane_cechy.clear()
         self.proponowane.clear()
+        self.button_submit.config(relief=SUNKEN, state=DISABLED)
         self.odległości.clear()
         self.licznik_cech = 0
-        features.clear()
-
+        self.canvas.get_tk_widget().pack_forget()
+        # self.toolbar.pack_forget()
 ids = []
 titles = []
 artists = []
