@@ -18,9 +18,10 @@ sp = spotipy.Spotify(auth_manager = SpotifyClientCredentials(client_id, client_s
 class SampleApp(Tk):
     def __init__(self):
         Tk.__init__(self)
+        self.state("zoomed")
         self.title("Likeable songs")
-        self.geometry("1200x600")
-        self.config(bg="purple4")
+        # self.geometry("1500x800")
+        self.config(bg="midnight blue")
         self._frame = None
         self.switch_frame(StartPage)
 
@@ -34,38 +35,38 @@ class SampleApp(Tk):
 
 class StartPage(Frame):
     def __init__(self, master):
-        Frame.__init__(self, master, width=1200, height = 600, bg = "purple4")
+        Frame.__init__(self, master, width=1920, height = 1080, bg = "midnight blue")
         self.stworzWidgety()
 
     def stworzWidgety(self):
-        start_frame = Frame(self, width = 800, height = 400, bg = "powderblue")
+        start_frame = Frame(self, width = 1150, height = 580, bg = "powderblue")
         start_frame.place(x = 200, y = 100)
-        nazwa_playlisty = Label(start_frame, text="Podaj dokładną nazwę playlisty")
-        nazwa_playlisty.place(x = 300, y = 50)
-        ID_playlisty = Label(start_frame, text="Podaj łącze do playlisty")
-        ID_playlisty.place(x = 300, y = 150)
-        self.entry_nazwa_playlisty = Entry(start_frame, width = 50)
-        self.entry_nazwa_playlisty.place(x=300, y = 100)
-        self.entry_ID_playlisty = Entry(start_frame, width = 50)
-        self.entry_ID_playlisty.place(x = 300, y = 200)
-        Button(start_frame, text="Zatwierdź", command = self.playlista).place(x=300, y = 250)
+        nazwa_playlisty = Label(start_frame, text="Podaj dokładną nazwę playlisty", font=("Arial", 14), width = 40, height=2)
+        nazwa_playlisty.place(x = 360, y = 100)
+        ID_playlisty = Label(start_frame, text="Podaj łącze do playlisty", font=("Arial", 14), width = 40, height=2)
+        ID_playlisty.place(x = 360, y = 225)
+        self.entry_nazwa_playlisty = Entry(start_frame)
+        self.entry_nazwa_playlisty.place(x=400, y = 155, width=360, height=30)
+        self.entry_ID_playlisty = Entry(start_frame)
+        self.entry_ID_playlisty.place(x=400, y=280, width=360, height=30)
+        Button(start_frame, text="Zatwierdź", command = self.playlista, height=2, width=20, font=("Arial", 12)).place(x=475, y = 350)
         self.dalej = Button(start_frame, text="Dalej",
-                  command=lambda: self.master.switch_frame(PageOne))
+                  command=lambda: self.master.switch_frame(PageOne), height=2, width=20, font=("Arial", 12))
         self.dalej.config(relief=SUNKEN, state=DISABLED)
-        self.dalej.place(x = 300, y = 300)
+        self.dalej.place(x = 475, y = 500)
 
     def playlista(self):
         global songs
         global features
         global target
-        nazwa = "Reassuring"
-        ID = "52KwifcwbsyxMfXUhcpMO4"
-        # nazwa = self.entry_nazwa_playlisty.get()
-        # ID = self.entry_ID_playlisty.get()      # ID playlisty to ten fragment linku po ukośniku i pytajnikiem
-        # if ID.startswith('https://open.spotify.com/playlist/'):
-        #     ID = ID[34:].split("?")[0]
-        # else:
-        #     print("Wklej odpowiedni link")       # zamiast tego printa dobrze byłoby wstawić messagebox z informacją
+        # nazwa = "Reassuring"
+        # ID = "52KwifcwbsyxMfXUhcpMO4"
+        nazwa = self.entry_nazwa_playlisty.get()
+        ID = self.entry_ID_playlisty.get()      # ID playlisty to ten fragment linku po ukośniku i pytajnikiem
+        if ID.startswith('https://open.spotify.com/playlist/'):
+            ID = ID[34:].split("?")[0]
+        else:
+            print("Wklej odpowiedni link")       # zamiast tego printa dobrze byłoby wstawić messagebox z informacją
         playlist = sp.user_playlist(nazwa, ID)
         songs = playlist["tracks"]["items"]
         print("Liczba piosenek: ", len(songs))    # niestety w tym API jest ograniczenie do 100 piosenek
@@ -80,22 +81,23 @@ class StartPage(Frame):
 
 class PageOne(Frame):
     def __init__(self, master):
-        Frame.__init__(self, master, width=1200, height = 600, bg = "purple4")
+        Frame.__init__(self, master, width=1920, height = 1080, bg = "midnight blue")
         self.stworzWidgety()
+        self.przygotuj_dane()
         self.wybrane_cechy = []
         self.odległości = []
         self.proponowane = []
         self.licznik_cech = 0
 
     def stworzWidgety(self):
-        left_frame1= Frame(self, width = 200, height = 75, bg = "powderblue")
-        left_frame1.grid(row = 0, column = 0, padx = 25, pady = 25)
-        left_frame2 = Frame(self, width = 200, height = 450, bg="powderblue")
-        left_frame2.grid(row = 1, column = 0, padx = 25)
+        left_frame1= Frame(self, width = 200, height = 100, bg = "powderblue")
+        left_frame1.grid(row = 0, column = 0, padx = 75)
+        left_frame2 = Frame(self, width = 200, height = 500, bg="powderblue")
+        left_frame2.grid(row = 1, column = 0, padx = 75)
         mid_frame1 = Frame(self, width = 200, height = 75, bg = "powderblue")
         mid_frame1.grid(row = 0, column = 1, padx = 25, pady = 25)
-        self.mid_frame2 = Frame(self, width = 600, height = 450, bg = "powderblue")
-        self.mid_frame2.grid(row = 1, column = 1)
+        self.mid_frame2 = Frame(self, width = 600, height = 500, bg = "powderblue")
+        self.mid_frame2.grid(row = 1, column = 1, pady=25)
         cechy = Label(left_frame1, text ="Cechy", relief=RAISED, width = 15, height = 2, font=("Arial", 14))
         cechy.grid(padx = 27, pady = 10)
         wybor_knn = Label(mid_frame1, text="Ile piosenek zaproponować?", width = 30, font=("Arial", 14))
@@ -132,6 +134,11 @@ class PageOne(Frame):
         self.reset_button.grid(row=12, column=0, pady=3)
         Button(self, text="Return to start page",
                   command=lambda: self.master.switch_frame(StartPage)).grid()
+
+    def przygotuj_dane(self):
+        df = pd.DataFrame(features)
+        df["title"] = titles
+        print(df)
 
     def wizualizuj_dane(self):
         if self.licznik_cech == 1:
