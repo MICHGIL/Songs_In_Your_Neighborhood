@@ -77,7 +77,6 @@ def potwierdzenie():
     for utwor in proponowane:
         print("\n", utwor)
 
-
 def button1_action():
     button1.config(relief=SUNKEN, state=DISABLED)
     wybrane_cechy.append('danceability')
