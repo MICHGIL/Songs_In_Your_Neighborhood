@@ -42,7 +42,7 @@ class StartPage(Frame):
     def stworzWidgety(self):
         start_frame = Frame(self, width=1150, height=580, bg="powderblue")
         start_frame.place(x=200, y=100)
-        ID_playlisty = Label(start_frame, text="Podaj łącze do playlisty", bg="slateblue", font=("Arial", 14),
+        ID_playlisty = Label(start_frame, text="Podaj łącze do playlisty", relief=GROOVE, bg="sandy brown", font=("Arial", 14),
                              width=40, height=2)
         ID_playlisty.place(x=360, y=225)
         self.entry_ID_playlisty = Entry(start_frame, font=("Arial", 12))
@@ -91,6 +91,7 @@ class PageOne(Frame):
         self.indeksy = []
         self.licznik_cech = 0
         self.fig = Figure(figsize=(6, 5.5), dpi=100, facecolor="powderblue")
+        self.blokada = 0
 
     def stworzWidgety(self):
         global home_image       # jak nie jest globalna, to obrazek się nie wyświetla
@@ -103,16 +104,16 @@ class PageOne(Frame):
         mid_frame_up.grid(row=0, column=1, pady=10, ipadx=8)
         self.mid_frame2 = Frame(self, width=800, height=550, bg="powderblue")
         self.mid_frame2.grid(row=1, column=1, pady=10)
-        # right_frame1 = Frame(self, width=500, height=200, bg="powderblue")
-        # right_frame1.grid(row=0, column=3, padx=20)
+        # right_frame1 = Text(self, width=30, height=4, bg="powderblue", bd=0, font=("Arial", 14), wrap=WORD, padx=10, pady=10, state=DISABLED)
+        # right_frame1.grid(row=0, column=3)
         self.resultbox = Text(self, bg="powderblue", width=40, height=30, bd=0, font=("Arial", 12), wrap=WORD, padx=10, pady=10,
                               state=DISABLED)
         self.resultbox.grid(row=1, column=3, padx=25)
-        wybor_piosenki = Label(mid_frame_up, text="Podaj łącze do utworu", bg="slateblue", width=25, height=2, font=("Arial", 12))
+        wybor_piosenki = Label(mid_frame_up, text="Podaj łącze do utworu", relief=GROOVE, bg="sandy brown", width=25, height=2, font=("Arial", 12))
         wybor_piosenki.grid(row=0, column=1, padx=10, pady=5)
-        cechy = Label(left_frame2, text="Cechy", relief=RAISED, bg="slateblue", width=15, height=2, font=("Arial", 14))
+        cechy = Label(left_frame2, text="Cechy", relief=GROOVE, bg="sandy brown", width=15, height=2, font=("Arial", 14))
         cechy.grid(row=0, column=0, pady=25)
-        wybor_knn = Label(mid_frame_up, text="Ile piosenek zaproponować?", bg="slateblue",  height=2, width=25, font=("Arial", 12))
+        wybor_knn = Label(mid_frame_up, text="Ile piosenek zaproponować?", relief=GROOVE, bg="sandy brown",  height=2, width=25, font=("Arial", 12))
         wybor_knn.grid(row=1, column=1, padx=25, pady=5)
         self.entry_wybor_piosenki = Entry(mid_frame_up, font=("Arial", 12))
         self.entry_wybor_piosenki.grid(row=0, column=2, padx=10, pady=5, ipady=10, ipadx=50)
@@ -144,8 +145,8 @@ class PageOne(Frame):
         self.button10.grid(row=10, column=0, padx=0, pady=3)
         self.button11 = Button(left_frame2, text="valence", width=15,  font=("Arial", 12), command=self.button11_action)
         self.button11.grid(row=11, column=0, padx=0, pady=3)
-        self.reset_button = Button(left_frame2, text="reset", width=15, bg="indian red", font=("Arial", 12), command=self.reset)
-        self.reset_button.grid(row=12, column=0, pady=3)
+        self.reset_button = Button(left_frame2, text="RESET", width=15, bg="MediumPurple2", font=("Arial", 12), command=self.reset)
+        self.reset_button.grid(row=12, column=0, pady=10)
         home_button = Button(self, image=home_image, command=lambda: self.master.switch_frame(StartPage))
         home_button.grid(row=0, column=0)
 
@@ -160,12 +161,18 @@ class PageOne(Frame):
     def wizualizuj_dane(self):
         self.canvas.get_tk_widget().pack_forget()
         self.chart.set_title("Przestrzeń najbliższych sąsiadów")
-
+        self.blokada = 1
         if self.licznik_cech == 1:
             self.chart.barh(self.df.loc[self.indeksy, "title"], self.df.loc[self.indeksy, self.wybrane_cechy[0]])
             self.chart.barh(self.target_title, self.target[0][self.wybrane_cechy[0]], color="orange")
-            self.scatter = FigureCanvasTkAgg(self.fig, master=self.mid_frame2)
-            self.scatter.get_tk_widget().pack()
+            # i = 0
+            # for x in (self.df.loc[self.indeksy, self.wybrane_cechy[0]]):
+            #     label = self.df.loc[self.indeksy[i], "title"]
+            #     self.chart.annotate(label, x, textcoords="offset points", xytext=(0, 5), ha="left")
+            #     i += 1
+            # self.chart.annotate(self.target_title, (self.target[0][self.wybrane_cechy[0]]), textcoords="offset points", xtext=(0, 5), ha="center")
+            self.wykres = FigureCanvasTkAgg(self.fig, master=self.mid_frame2)
+            self.wykres.get_tk_widget().pack()
         elif self.licznik_cech == 2:
             data_x = self.df.loc[self.indeksy, self.wybrane_cechy[0]]
             data_y = self.df.loc[self.indeksy, self.wybrane_cechy[1]]
@@ -175,25 +182,25 @@ class PageOne(Frame):
                 self.chart.annotate(label, (x, y), textcoords="offset points", xytext=(0, 5), ha="center")
                 i += 1
             self.chart.annotate(self.target_title, (self.target[0][self.wybrane_cechy[0]], self.target[0][self.wybrane_cechy[1]]),
-                                textcoords="offset points", xytext=(0, 5), ha="center")
+                                textcoords="offset points", xytext=(0, 5), ha="center")             ## anotacja dla wybranej piosenkki (targetu)
             self.chart.scatter(data_x, data_y, color='b')
             self.chart.scatter(self.target[0][self.wybrane_cechy[0]], self.target[0][self.wybrane_cechy[1]], color="orange")
-            self.scatter = FigureCanvasTkAgg(self.fig, master=self.mid_frame2)
-            self.scatter.get_tk_widget().pack()
+            self.wykres = FigureCanvasTkAgg(self.fig, master=self.mid_frame2)
+            self.wykres.get_tk_widget().pack()
         elif self.licznik_cech == 3:
             data_x = self.df.loc[self.indeksy, self.wybrane_cechy[0]]
             data_y = self.df.loc[self.indeksy, self.wybrane_cechy[1]]
             data_z = self.df.loc[self.indeksy, self.wybrane_cechy[2]]
-            i = 0
-            for x, y, z in zip(data_x, data_y, data_z):
-                x3D, y3D, _ = proj3d.proj_transform(x, y, z, self.chart.get_proj())
-                label = self.df.loc[self.indeksy[i], "title"]
-                self.chart.annotate(label, (x3D, y3D), textcoords="offset points", xytext=(0, 5), ha="center")
-                i += 1
+            # i = 0
+            # for x, y, z in zip(data_x, data_y, data_z):
+            #     x3D, y3D, _ = proj3d.proj_transform(x, y, z, self.chart.get_proj())
+            #     label = self.df.loc[self.indeksy[i], "title"]
+            #     self.chart.annotate(label, (x3D, y3D), textcoords="offset points", xytext=(0, 5), ha="center")
+            #     i += 1
             self.chart.scatter(data_x, data_y, data_z, color='b')
             self.chart.scatter(self.target[0][self.wybrane_cechy[0]], self.target[0][self.wybrane_cechy[1]], self.target[0][self.wybrane_cechy[2]], color="orange")
-            self.scatter = FigureCanvasTkAgg(self.fig, master=self.mid_frame2)
-            self.scatter.get_tk_widget().pack()
+            self.wykres = FigureCanvasTkAgg(self.fig, master=self.mid_frame2)
+            self.wykres.get_tk_widget().pack()
 
     def rysuj_osie(self):
         if self.licznik_cech == 1:
@@ -206,6 +213,7 @@ class PageOne(Frame):
             self.canvas.get_tk_widget().pack()
         elif self.licznik_cech == 2:
             self.canvas.get_tk_widget().pack_forget()
+            self.chart
             self.fig = Figure(figsize=(8, 5.5), dpi=100, facecolor="powderblue")
             self.chart = self.fig.add_subplot(111)
             self.chart.set_xlabel(self.wybrane_cechy[0])
@@ -279,147 +287,174 @@ class PageOne(Frame):
         self.odległości.sort()
 
     def potwierdzenie(self):
-        self.przygotuj_dane()
-        self.canvas.get_tk_widget().pack_forget()
-        target_id = str(self.entry_wybor_piosenki.get())
-        if target_id.startswith('https://open.spotify.com/track/'):
-            target_id = target_id[31:].split("?")[0]
-            self.target_title = sp.track(target_id)["name"]
-            self.target_artist = sp.track(target_id)["artists"][0]["name"]
-            self.target = sp.audio_features(target_id)
-            self.obliczanie_odleglosci()
-            k = int(self.pole_tekstowe.get())
-            self.pole_tekstowe.delete(0, 'end')
-            print("Posortowane odległości:", self.odległości)
-            for i in range(k):
-                self.proponowane.append(self.odległości[i])
-                self.proponowane_ids.append(self.odległości[i][1])
-            for id in self.proponowane_ids:
-                self.indeksy.append(self.df[self.df['id'] == id].index.item())
-            self.wizualizuj_dane()
-            print("\nOto proponowane piosenki: \n")
-            for i in range(len(self.proponowane)):
-                tytuł = self.proponowane[i][2]
-                wykonawca = self.proponowane[i][3]
-                URI = self.proponowane[i][4]
-                self.resultbox.config(state=NORMAL)
-                self.resultbox.insert(END, (str(i+1)+". "+tytuł+" - "+wykonawca+"\n"+URI+"\n\n"))
-            self.resultbox.config(state=DISABLED)
-            self.odległości.clear()     # trzeba wyczyścić odległości, żeby przy wpisaniu innej liczby sąsiadów się nie nadpisało
-            self.button_submit.config(state=DISABLED)
+        k = int(self.pole_tekstowe.get())
+        self.pole_tekstowe.delete(0, 'end')
+        if k > len(songs):
+            messagebox.showerror("Błąd", "Playlista nie ma tyle utworów! Wybierz mniejszą liczbę")
         else:
-            messagebox.showerror("Błąd", "Błędny link. Podaj łącze do utworu.\n\nW oknie Spotify wybierz utwór, znajdź zakładkę 'Udostępnij', a następnie wybierz opcję 'skopiuj łącze do utworu'")
-            self.entry_wybor_piosenki.delete(0, 'end')
+            self.przygotuj_dane()
+            self.canvas.get_tk_widget().pack_forget()
+            target_id = str(self.entry_wybor_piosenki.get())
+            if target_id.startswith('https://open.spotify.com/track/'):
+                target_id = target_id[31:].split("?")[0]
+                self.target_title = sp.track(target_id)["name"]
+                self.target_artist = sp.track(target_id)["artists"][0]["name"]
+                self.target = sp.audio_features(target_id)
+                self.obliczanie_odleglosci()
+                print("Posortowane odległości:", self.odległości)
+                for i in range(k):
+                    self.proponowane.append(self.odległości[i])
+                    self.proponowane_ids.append(self.odległości[i][1])
+                for id in self.proponowane_ids:
+                    self.indeksy.append(self.df[self.df['id'] == id].index.item())
+                self.wizualizuj_dane()
+                # print("\nOto proponowane piosenki: \n")
+                self.resultbox.config(state=NORMAL)
+                self.resultbox.insert(END, "Polecane na podstawie: "+self.target_title+" - "+self.target_artist+"\n\n")
+                for i in range(len(self.proponowane)):
+                    tytuł = self.proponowane[i][2]
+                    wykonawca = self.proponowane[i][3]
+                    URI = self.proponowane[i][4]
+                    self.resultbox.insert(END, str(i+1)+". "+tytuł+" - "+wykonawca+"\n"+URI+"\n\n")
+                self.resultbox.config(state=DISABLED)
+                self.odległości.clear()          # trzeba wyczyścić odległości, żeby przy wpisaniu innej liczby sąsiadów się nie nadpisało
+                self.button_submit.config(state=DISABLED)
+            else:
+                messagebox.showerror("Błąd", "Błędny link. Podaj łącze do utworu.\n\nW oknie Spotify wybierz utwór, znajdź zakładkę 'Udostępnij', a następnie wybierz opcję 'skopiuj łącze do utworu'")
+                self.entry_wybor_piosenki.delete(0, 'end')
 
     def button1_action(self):
-        if self.licznik_cech < 3:
-            self.button1.config(relief=SUNKEN, state=DISABLED)
-            self.button_submit.config(relief=RAISED, state=NORMAL)
-            self.wybrane_cechy.append('danceability')
-            self.licznik_cech += 1
-            self.rysuj_osie()
+        if self.blokada == 0:
+            if self.licznik_cech < 3:
+                self.button1.config(relief=SUNKEN, state=DISABLED)
+                self.button_submit.config(relief=RAISED, state=NORMAL)
+                self.wybrane_cechy.append('danceability')
+                self.licznik_cech += 1
+                self.rysuj_osie()
+            else:
+                messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
         else:
-            messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
-
+            messagebox.showwarning("Wskazówka", "Najpierw zresetuj ustawienia, klikając przycisk 'RESET'")
     def button2_action(self):
-        if self.licznik_cech < 3:
-            self.button2.config(relief=SUNKEN, state=DISABLED)
-            self.button_submit.config(relief=RAISED, state=NORMAL)
-            self.wybrane_cechy.append('energy')
-            self.licznik_cech += 1
-            self.rysuj_osie()
+        if self.blokada == 0:
+            if self.licznik_cech < 3:
+                self.button2.config(relief=SUNKEN, state=DISABLED)
+                self.button_submit.config(relief=RAISED, state=NORMAL)
+                self.wybrane_cechy.append('energy')
+                self.licznik_cech += 1
+                self.rysuj_osie()
+            else:
+                messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
         else:
-            messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
-
+            messagebox.showwarning("Wskazówka", "Najpierw zresetuj ustawienia, klikając przycisk 'RESET'")
     def button3_action(self):
-        if self.licznik_cech < 3:
-            self.button3.config(relief=SUNKEN, state=DISABLED)
-            self.button_submit.config(relief=RAISED, state=NORMAL)
-            self.wybrane_cechy.append('key')
-            self.licznik_cech += 1
-            self.rysuj_osie()
+        if self.blokada == 0:
+            if self.licznik_cech < 3:
+                self.button3.config(relief=SUNKEN, state=DISABLED)
+                self.button_submit.config(relief=RAISED, state=NORMAL)
+                self.wybrane_cechy.append('key')
+                self.licznik_cech += 1
+                self.rysuj_osie()
+            else:
+                messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
         else:
-            messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
-
+            messagebox.showwarning("Wskazówka", "Najpierw zresetuj ustawienia, klikając przycisk 'RESET'")
     def button4_action(self):
-        if self.licznik_cech < 3:
-            self.button4.config(relief=SUNKEN, state=DISABLED)
-            self.button_submit.config(relief=RAISED, state=NORMAL)
-            self.wybrane_cechy.append('acousticness')
-            self.licznik_cech += 1
-            self.rysuj_osie()
+        if self.blokada == 0:
+            if self.licznik_cech < 3:
+                self.button4.config(relief=SUNKEN, state=DISABLED)
+                self.button_submit.config(relief=RAISED, state=NORMAL)
+                self.wybrane_cechy.append('acousticness')
+                self.licznik_cech += 1
+                self.rysuj_osie()
+            else:
+                messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
         else:
-            messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
-
+            messagebox.showwarning("Wskazówka", "Najpierw zresetuj ustawienia, klikając przycisk 'RESET'")
     def button5_action(self):
-        if self.licznik_cech < 3:
-            self.button5.config(relief=SUNKEN, state=DISABLED)
-            self.button_submit.config(relief=RAISED, state=NORMAL)
-            self.wybrane_cechy.append('instrumentalness')
-            self.licznik_cech += 1
-            self.rysuj_osie()
+        if self.blokada == 0:
+            if self.licznik_cech < 3:
+                self.button5.config(relief=SUNKEN, state=DISABLED)
+                self.button_submit.config(relief=RAISED, state=NORMAL)
+                self.wybrane_cechy.append('instrumentalness')
+                self.licznik_cech += 1
+                self.rysuj_osie()
+            else:
+                messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
         else:
-            messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
-
+            messagebox.showwarning("Wskazówka", "Najpierw zresetuj ustawienia, klikając przycisk 'RESET'")
     def button6_action(self):
-        if self.licznik_cech < 3:
-            self.button6.config(relief=SUNKEN, state=DISABLED)
-            self.button_submit.config(relief=RAISED, state=NORMAL)
-            self.wybrane_cechy.append('liveness')
-            self.licznik_cech += 1
-            self.rysuj_osie()
+        if self.blokada == 0:
+            if self.licznik_cech < 3:
+                self.button6.config(relief=SUNKEN, state=DISABLED)
+                self.button_submit.config(relief=RAISED, state=NORMAL)
+                self.wybrane_cechy.append('liveness')
+                self.licznik_cech += 1
+                self.rysuj_osie()
+            else:
+                messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
         else:
-            messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
-
+            messagebox.showwarning("Wskazówka", "Najpierw zresetuj ustawienia, klikając przycisk 'RESET'")
     def button7_action(self):
-        if self.licznik_cech < 3:
-            self.button7.config(relief=SUNKEN, state=DISABLED)
-            self.button_submit.config(relief=RAISED, state=NORMAL)
-            self.wybrane_cechy.append('loudness')
-            self.licznik_cech += 1
-            self.rysuj_osie()
+        if self.blokada == 0:
+            if self.licznik_cech < 3:
+                self.button7.config(relief=SUNKEN, state=DISABLED)
+                self.button_submit.config(relief=RAISED, state=NORMAL)
+                self.wybrane_cechy.append('loudness')
+                self.licznik_cech += 1
+                self.rysuj_osie()
+            else:
+                messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
         else:
-            messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
-
+            messagebox.showwarning("Wskazówka", "Najpierw zresetuj ustawienia, klikając przycisk 'RESET'")
     def button8_action(self):
-        if self.licznik_cech < 3:
-            self.button8.config(relief=SUNKEN, state=DISABLED)
-            self.button_submit.config(relief=RAISED, state=NORMAL)
-            self.wybrane_cechy.append('mode')
-            self.licznik_cech += 1
-            self.rysuj_osie()
+        if self.blokada == 0:
+            if self.licznik_cech < 3:
+                self.button8.config(relief=SUNKEN, state=DISABLED)
+                self.button_submit.config(relief=RAISED, state=NORMAL)
+                self.wybrane_cechy.append('mode')
+                self.licznik_cech += 1
+                self.rysuj_osie()
+            else:
+                messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
         else:
-            messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
-
+            messagebox.showwarning("Wskazówka", "Najpierw zresetuj ustawienia, klikając przycisk 'RESET'")
     def button9_action(self):
-        if self.licznik_cech < 3:
-            self.button9.config(relief=SUNKEN, state=DISABLED)
-            self.button_submit.config(relief=RAISED, state=NORMAL)
-            self.wybrane_cechy.append('speechiness')
-            self.licznik_cech += 1
-            self.rysuj_osie()
+        if self.blokada == 0:
+            if self.licznik_cech < 3:
+                self.button9.config(relief=SUNKEN, state=DISABLED)
+                self.button_submit.config(relief=RAISED, state=NORMAL)
+                self.wybrane_cechy.append('speechiness')
+                self.licznik_cech += 1
+                self.rysuj_osie()
+            else:
+                messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
         else:
-            messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
-
+            messagebox.showwarning("Wskazówka", "Najpierw zresetuj ustawienia, klikając przycisk 'RESET'")
     def button10_action(self):
-        if self.licznik_cech < 3:
-            self.button10.config(relief=SUNKEN, state=DISABLED)
-            self.button_submit.config(relief=RAISED, state=NORMAL)
-            self.wybrane_cechy.append('tempo')
-            self.licznik_cech += 1
-            self.rysuj_osie()
+        if self.blokada == 0:
+            if self.licznik_cech < 3:
+                self.button10.config(relief=SUNKEN, state=DISABLED)
+                self.button_submit.config(relief=RAISED, state=NORMAL)
+                self.wybrane_cechy.append('tempo')
+                self.licznik_cech += 1
+                self.rysuj_osie()
+            else:
+                messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
         else:
-            messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
-
+            messagebox.showwarning("Wskazówka", "Najpierw zresetuj ustawienia, klikając przycisk 'RESET'")
     def button11_action(self):
-        if self.licznik_cech < 3:
-            self.button11.config(relief=SUNKEN, state=DISABLED)
-            self.button_submit.config(relief=RAISED, state=NORMAL)
-            self.wybrane_cechy.append('valence')
-            self.licznik_cech += 1
-            self.rysuj_osie()
+        if self.blokada == 0:
+            if self.licznik_cech < 3:
+                self.button11.config(relief=SUNKEN, state=DISABLED)
+                self.button_submit.config(relief=RAISED, state=NORMAL)
+                self.wybrane_cechy.append('valence')
+                self.licznik_cech += 1
+                self.rysuj_osie()
+            else:
+                messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
         else:
-            messagebox.showwarning("Wskazówka", "Możesz wybrać maksymalnie 3 cechy! Tylko tyle zmieści się na wykresie.")
+            messagebox.showwarning("Wskazówka", "Najpierw zresetuj ustawienia, klikając przycisk 'RESET'")
 
     def reset(self):
         self.button1.config(relief=RAISED, state=NORMAL)
@@ -440,19 +475,19 @@ class PageOne(Frame):
         self.button_submit.config(relief=SUNKEN, state=DISABLED)
         self.odległości.clear()
         self.licznik_cech = 0
+        self.blokada = 0
         if self.resultbox['state'] == DISABLED:
             self.resultbox.config(state=NORMAL)
             self.resultbox.delete("1.0", END)
         self.resultbox.config(state=DISABLED)
         self.canvas.get_tk_widget().pack_forget()
-        try:
-            self.scatter.get_tk_widget().pack_forget()
-        except:
-            self.barh.get_tk_widget().pack_forget()
-        try:
-            self.barh.get_tk_widget().pack_forget()
-        except:
-            self.scatter.get_tk_widget().pack_forget()
+        self.wykres.get_tk_widget().pack_forget()
+        # except:
+        #     self.barh.get_tk_widget().pack_forget()
+        # try:
+        #     self.barh.get_tk_widget().pack_forget()
+        # except:
+        #     self.wykres.get_tk_widget().pack_forget()
 
 app = App()
 app.mainloop()
