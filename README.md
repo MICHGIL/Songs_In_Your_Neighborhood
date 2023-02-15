@@ -1,4 +1,4 @@
-# LABY_BIG-PROJECT
+# Songs In Your Neighborhood
 Project on programming labs
 - songs recommendation system with kNN
 - data visualization 
