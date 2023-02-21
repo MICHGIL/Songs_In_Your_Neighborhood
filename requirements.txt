@@ -1,4 +1,4 @@
 pandas==1.2.1
 matplotlib==3.3.4
-spotipy==2.16.1
+spotipy==2.22.1
 tk==0.1.0
