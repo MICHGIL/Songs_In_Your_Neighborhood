@@ -1,27 +1,35 @@
-# Songs In Your Neighborhood 
+# 🎵 Songs In Your Neighborhood 
 ## Summary
-Project originally for Python programming labs. 
+Originally created for Python programming labs, Songs In Your Neighborhood was designed as a **personal song recommendation app**. It allowed the user to find songs from a chosen Spotify playlist based on a reference song and selected audio features.
 
-Songs In Your Neighborhood is a personal song recommendation app. It allows you to find songs from a chosen Spotify playlist that you might like based on a chosen song and features.
-### How does it work?
-1) Pick a Spotify playlist that you will get recommendation from 
-2) Choose a song that your recommendation will be based on
-3) Select song features that will be taken into account in recommendation  
-4) Find songs in your neighborhood you might like 
+## ⚠ Spotify Web API Update & Project Status
+🚨 Update (Feb 2025): Spotify recently [removed access to audio features](https://developer.spotify.com/blog/2024-11-27-changes-to-the-web-api) (e.g., danceability, energy) from their API, which were a **core part** of this project.  
 
-## Technologies used
+❌ As a result, the original functionality is no longer working.   
+🔄 The project is in transition and may evolve over time. I may explore adapting it to focus on user behavior analysis, such as listening habits and trends.
+
+##  How It Used to Work
+1) Pick a Spotify playlist to use as a recommendation source.
+2) Choose a reference song to base the recommendation on.
+3) Select audio features (e.g. energy, danceability, key) to guide the recommendation.
+4) Find similar songs in your "neighborhood" that you might like.  
+
+## 🛠 Technologies used
 - Python
 - pandas
-- songs recommendation system with KNN algorithm 
 - Spotify Web API (Spotipy)
 - GUI (Tkinter)
-- data visualisation of the nearest neighbors (matplotlib) 
+- KNN-style similarity search using feature distances
+- matplotlib (for visualizing nearest neighbors)
 
-## Future steps
+
+🚨 Note: Due to Spotify API changes, the recommendation system based on audio features is no longer functional.
+
+## Planned upgrades (outdated due to the API update)
 - GUI major upgrade
-- data visualisation changes
+- Data visualisation changes
   - interactive annotations (hover over feature) 
-- built-in music player to play snippets of recommended songs
+- Built-in music player to play snippets of recommended songs
 
 ## Screenshots
 ![SIYN_screenshot1](https://user-images.githubusercontent.com/50332018/233088348-b5a47b3f-de6c-45f1-8f5c-ca02dac45a09.png)
