@@ -1,5 +1,6 @@
 import pandas as pd
 import spotipy
+import json
 import math
 from tkinter import *
 from tkinter import messagebox
@@ -12,10 +13,13 @@ from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d import proj3d
 from statistics import mode
 
-client_id = "2414011f2fab4d93ab24db4093524758"
-client_secret = "b4b85483ecac42cfa2d9e8b255137757"
-sp = spotipy.Spotify(
-    auth_manager=SpotifyClientCredentials(client_id, client_secret))
+
+with open("config.json") as config_file:
+    config = json.load(config_file)
+
+sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
+    client_id=config["SPOTIPY_CLIENT_ID"],
+    client_secret=config["SPOTIPY_CLIENT_SECRET"]))
 
 
 class App(Tk):
