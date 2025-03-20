@@ -1,6 +1,6 @@
 # 🎵 Songs In Your Neighborhood 
 ## Summary
-Originally created for Python programming labs, Songs In Your Neighborhood was designed as a **personal song recommendation app**. It allowed the user to find songs from a chosen Spotify playlist based on a reference song and selected audio features.
+Originally created in 2021 for Python programming labs, Songs In Your Neighborhood was designed as a **personal song recommendation app**. It allowed the user to find songs from a chosen Spotify playlist based on a reference song and selected audio features.
 
 ## ⚠ Spotify Web API Update & Project Status
 🚨 Update (Feb 2025): Spotify recently [removed access to audio features](https://developer.spotify.com/blog/2024-11-27-changes-to-the-web-api) (e.g., danceability, energy) from their API, which were a **core part** of this project.  
@@ -27,7 +27,7 @@ Originally created for Python programming labs, Songs In Your Neighborhood was d
 
 ## Planned upgrades (outdated due to the API update)
 - GUI major upgrade
-- Data visualisation changes
+- Data visualization changes
   - interactive annotations (hover over feature) 
 - Built-in music player to play snippets of recommended songs
 
